@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create Account</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .auth-card {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            width: 360px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .auth-card h2 {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .auth-card input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 14px;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+            font-size: 14px;
+        }
+        .auth-card button {
+            width: 100%;
+            padding: 12px;
+            background: #667eea;
+            border: none;
+            color: white;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        .auth-card a {
+            display: block;
+            margin-top: 15px;
+            text-align: center;
+            color: #555;
+            text-decoration: none;
+        }
+
+        .form-error {
+            background: #ffe6e6;
+            color: #b00020;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 18px;
+            font-size: 14px;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .password-hints {
+            font-size: 13px;
+            color: #555;
+            margin: 12px 0 20px;
+        }
+        .password-hints ul {
+            padding-left: 18px;
+            margin: 6px 0 0;
+        }
+        .password-hints li {
+            margin-bottom: 4px;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="auth-card">
+    <h2>Create Account</h2>
+
+    <form method="post">
+        {% csrf_token %}
+
+        {% if form.errors %}
+            <div id="form-error" class="form-error">
+                {{ form.errors }}
+            </div>
+        {% endif %}
+
+
+
+        <input type="text" name="username" placeholder="Username" required>
+        <input type="email" name="email" placeholder="Email address" required>
+        <input type="password" name="password1" placeholder="Password" required>
+        <input type="password" name="password2" placeholder="Confirm Password" required>
+        
+        <div class="password-hints">
+            <p>Password must contain:</p>
+            <ul>
+                <li>At least 8 characters</li>
+                <li>1 uppercase letter</li>
+                <li>1 lowercase letter</li>
+                <li>1 number</li>
+                <li>1 special character</li>
+            </ul>
+        </div>
+
+
+        <button type="submit">Create Account</button>
+    </form>
+
+
+    <a href="{% url 'login' %}">Already have an account? Login</a>
+</div>
+
+</body>
+<script>
+    const errorBox = document.getElementById("form-error");
+    if (errorBox) {
+        setTimeout(() => {
+            errorBox.style.transition = "opacity 0.5s ease";
+            errorBox.style.opacity = "0";
+            setTimeout(() => errorBox.remove(), 500);
+        }, 4000);
+    }
+</script>
+
+</html>

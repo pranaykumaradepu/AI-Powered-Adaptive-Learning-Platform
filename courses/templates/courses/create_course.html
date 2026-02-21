@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create New Course</title>
+    <style>
+        body {
+            font-family: "Segoe UI", sans-serif;
+            background: #f4f6f9;
+            padding: 40px;
+        }
+
+        .form-box {
+            background: white;
+            padding: 30px;
+            max-width: 500px;
+            margin: auto;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0 20px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        label {
+            font-weight: bold;
+            color: #333;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #007bff;
+            color: white;
+            border: none;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #2563eb, #4f46e5);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+</style>
+{% include 'courses/includes/progress_loader_assets.html' %}
+</head>
+<body>
+
+<div class="form-box">
+    <h2 style="text-align: center;">Design Your Learning Path</h2>
+    <p style="text-align: center; color: #666;">Tell the AI exactly what you need.</p>
+
+    <form method="POST" id="courseForm">
+        {% csrf_token %}
+
+        <label>What do you want to learn?</label>
+        <input type="text" name="topic" placeholder="e.g. Python, Digital Marketing, Guitar" required>
+
+        <label>What is your specific goal?</label>
+        <input type="text" name="goal" placeholder="e.g. Get a Job, Build an App, Pass an Exam" required>
+
+        <label>What is your current experience level?</label>
+        <select name="level">
+            <option value="Beginner">Absolute Beginner (Start from zero)</option>
+            <option value="Intermediate">Intermediate (I know the basics)</option>
+            <option value="Advanced">Advanced (Challenge me!)</option>
+        </select>
+
+        <label>How deep should this course be?</label>
+        <select name="duration">
+            <option value="Crash Course">Crash Course (Fast and Focused)</option>
+            <option value="Comprehensive">Comprehensive (Deep Dive)</option>
+        </select>
+
+        <button type="submit" id="generateBtn" class="btn-primary">Generate Personalized Course</button>
+    </form>
+
+    {% include 'courses/includes/progress_loader_overlay.html' with loader_id='courseLoadingOverlay' loader_title='Generating your personalized course' loader_subtext='Preparing your curriculum...' %}
+
+    <p style="text-align: center; margin-top: 15px;">
+        <a href="{% url 'dashboard' %}" style="text-decoration: none; color: #666;">Cancel</a>
+    </p>
+</div>
+
+<script>
+const courseLoader = window.createProgressLoader("courseLoadingOverlay");
+
+document.getElementById("courseForm").addEventListener("submit", function() {
+    const btn = document.getElementById("generateBtn");
+
+    const topic = document.querySelector('input[name="topic"]').value.trim() || "your topic";
+    const goal = document.querySelector('input[name="goal"]').value.trim() || "your goal";
+    const level = document.querySelector('select[name="level"]').value;
+    const duration = document.querySelector('select[name="duration"]').value;
+
+    const messages = [
+        `Analyzing ${topic} scope...`,
+        `Aligning lessons to ${goal}...`,
+        `Structuring modules for ${level} level...`,
+        `Applying ${duration.toLowerCase()} depth...`,
+        "Drafting practice and assessments...",
+        "Refining explanations and examples...",
+        "Finalizing your learning path..."
+    ];
+
+    btn.disabled = true;
+    btn.textContent = "Generating...";
+
+    if (courseLoader) {
+        courseLoader.show({
+            title: `Building ${topic} course`,
+            subText: `${level} path | ${duration} | Goal: ${goal}`,
+            initialStatus: "Connecting...",
+            messages
+        });
+    }
+});
+</script>
+
+</body>
+</html>
+

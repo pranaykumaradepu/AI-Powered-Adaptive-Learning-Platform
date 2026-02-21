@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Project Submission - {{ module.title }}</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background: #f7f8fb;
+            color: #1f2937;
+        }
+
+        .topbar {
+            background: #0a2540;
+            color: white;
+            padding: 14px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .topbar a {
+            color: #dbeafe;
+            text-decoration: none;
+            margin-right: 12px;
+        }
+
+        .logout-btn {
+            background: #1d4ed8;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 14px;
+            text-decoration: none;
+        }
+
+        .page {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 14px;
+            padding: 36px 40px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 18px;
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        h1 {
+            font-size: 26px;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            color: #6b7280;
+            margin-bottom: 28px;
+        }
+
+        .info-box {
+            background: #f0f9ff;
+            border: 1px solid #bae6fd;
+            border-radius: 10px;
+            padding: 16px 20px;
+            margin-bottom: 28px;
+            font-size: 14px;
+            color: #075985;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 260px;
+            resize: vertical;
+            font-family: Consolas, Monaco, 'Courier New', monospace;
+            font-size: 14px;
+            padding: 16px;
+            border-radius: 10px;
+            border: 1px solid #e5e7eb;
+            background: #0f172a;
+            color: #e5e7eb;
+            outline: none;
+        }
+
+        textarea::placeholder {
+            color: #94a3b8;
+        }
+
+        .submit-btn {
+            margin-top: 24px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .submit-btn:hover {
+             background: #1d4ed8;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="topbar">
+    <div>
+        <a href="{% url 'dashboard' %}">Dashboard</a>
+        <a href="{% url 'course_detail' module.course.id %}?module={{ module.id }}">Back to Module</a>
+    </div>
+    <div>
+        <span style="margin-right:12px;">{{ request.user.username }}</span>
+        <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
+    </div>
+</div>
+
+<div class="page">
+    <div class="card">
+
+        <a href="{% url 'course_detail' module.course.id %}?module={{ module.id }}" class="back-link">
+            Back to Module
+        </a>
+
+        <h1>Project Check</h1>
+        <div class="subtitle">
+            {{ module.title }}
+        </div>
+
+        <div class="info-box">
+            To pass this module, submit your solution code below.<br>
+            The AI will analyze your <strong>logic</strong>, <strong>structure</strong>, and <strong>syntax</strong>.
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+
+            <label><strong>Your Code:</strong></label><br><br>
+
+            <textarea name="user_code" placeholder="def my_function():
+    # write your solution here
+    pass"></textarea>
+
+            <button type="submit" class="submit-btn">
+                Analyze My Code
+            </button>
+        </form>
+
+    </div>
+</div>
+
+</body>
+</html>

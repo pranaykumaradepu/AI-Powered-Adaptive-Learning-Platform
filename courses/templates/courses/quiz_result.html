@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Result - {{ module.title }}</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background: #f7f8fb;
+            color: #1f2937;
+        }
+
+        .topbar {
+            background: #0a2540;
+            color: white;
+            padding: 14px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .topbar a {
+            color: #dbeafe;
+            text-decoration: none;
+            margin-right: 12px;
+        }
+
+        .logout-btn {
+            background: #1d4ed8;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 14px;
+            text-decoration: none;
+        }
+
+        .page {
+            max-width: 700px;
+            margin: 60px auto;
+            padding: 0 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 14px;
+            padding: 40px;
+            border: 1px solid #e5e7eb;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 26px;
+            margin-bottom: 12px;
+        }
+
+        .score {
+            font-size: 15px;
+            color: #6b7280;
+            margin-bottom: 24px;
+        }
+
+        .status-success { color: #16a34a; }
+        .status-warning { color: #d97706; }
+        .status-fail { color: #dc2626; }
+
+        .message {
+            font-size: 15px;
+            margin-bottom: 24px;
+            color: #374151;
+        }
+
+        .feedback {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 16px 18px;
+            text-align: left;
+            font-size: 14px;
+            margin-bottom: 28px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 26px;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            text-decoration: none;
+            margin: 6px;
+        }
+
+        .btn-primary {
+            background: #2563eb;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="topbar">
+    <div>
+        <a href="{% url 'dashboard' %}">Dashboard</a>
+        <a href="{% url 'course_detail' module.course.id %}?module={{ module.id }}">Back to Module</a>
+    </div>
+    <div>
+        <span style="margin-right:12px;">{{ request.user.username }}</span>
+        <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
+    </div>
+</div>
+
+<div class="page">
+    <div class="card">
+
+        {% if passed %}
+            {% if soft_pass %}
+                <h1 class="status-warning">Soft Pass</h1>
+                <div class="score">Score: {{ score }}%</div>
+                <div class="message">
+                    You passed, but some concepts need reinforcement.
+                    A micro-lesson has been added to your next module.
+                </div>
+            {% else %}
+                <h1 class="status-success">Great Job</h1>
+                <div class="score">Score: {{ score }}%</div>
+                <div class="message">
+                    You have successfully completed this module.
+                </div>
+            {% endif %}
+
+            {% if feedback %}
+                <div class="feedback">
+                    <strong>AI Feedback</strong><br><br>
+                    {{ feedback }}
+                </div>
+            {% endif %}
+
+            {% if next_module %}
+                <a href="{% url 'course_detail' module.course.id %}?module={{ next_module.id }}" class="btn btn-primary">
+                    Continue
+                </a>
+            {% else %}
+                <a href="{% url 'course_detail' module.course.id %}" class="btn btn-primary">
+                    Continue
+                </a>
+            {% endif %}
+        {% else %}
+            <h1 class="status-fail">Not Passed</h1>
+            <div class="score">Score: {{ score }}%</div>
+
+            <div class="message">
+                You need at least <strong>60%</strong> to proceed.<br>
+                Review the lesson and try again.
+            </div>
+
+            <a href="{% url 'course_detail' module.course.id %}?module={{ module.id }}" class="btn btn-danger">
+                Retry Module
+            </a>
+        {% endif %}
+
+    </div>
+</div>
+
+</body>
+</html>

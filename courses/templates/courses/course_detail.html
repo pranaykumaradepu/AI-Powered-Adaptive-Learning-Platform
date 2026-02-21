@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>{{ course.title }}</title>
+
+<link rel="stylesheet"
+ href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script>hljs.highlightAll();</script>
+
+<style>
+body {
+    margin: 0;
+    font-family: "Segoe UI", sans-serif;
+    background: #f4f6fa;
+}
+
+.navbar {
+    background: #0a2540;
+    color: white;
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    position: relative;
+}
+
+.navbar-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    z-index: 1;
+}
+
+.back-link {
+    color: #dbeafe;
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.course-title {
+    font-size: 18px;
+    font-weight: 600;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: 65%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: center;
+}
+
+.navbar-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    z-index: 1;
+}
+
+.logout-btn {
+    background: #1d4ed8;
+    border: none;
+    color: white;
+    padding: 8px 14px;
+    border-radius: 8px;
+    text-decoration: none;
+}
+
+.layout {
+    display: flex;
+    height: calc(100vh - 56px);
+}
+
+.sidebar {
+    width: 330px;
+    background: white;
+    border-right: 1px solid #e5e7eb;
+    overflow-y: auto;
+    transition: width 0.25s ease, padding 0.25s ease;
+}
+
+.sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 16px 8px;
+}
+
+.sidebar h3 {
+    margin: 0;
+    font-size: 20px;
+}
+
+.collapse-btn {
+    border: none;
+    background: #eef2ff;
+    color: #1d4ed8;
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 18px;
+    line-height: 1;
+}
+
+.sidebar-subtitle {
+    margin: 0;
+    padding: 2px 16px 10px;
+    color: #111827;
+    font-size: 13px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.sidebar-subtitle::before {
+    content: "^";
+    color: #374151;
+    font-size: 11px;
+    margin-top: -2px;
+}
+
+.module-item {
+    margin: 0;
+    padding: 10px 16px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    border-left: 3px solid transparent;
+}
+
+.module-item:hover {
+    background: #f8fafc;
+}
+
+.module-item.active {
+    background: #f3f4f6;
+    border-left-color: #2563eb;
+    font-weight: 600;
+}
+
+.module-item.locked {
+    color: #9ca3af;
+    cursor: not-allowed;
+}
+
+.module-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    line-height: 1.35;
+}
+
+.module-indicator {
+    width: 16px;
+    height: 16px;
+    border-radius: 999px;
+    border: 2px solid #cbd5e1;
+    background: #fff;
+    flex-shrink: 0;
+    position: relative;
+}
+
+.module-item.active .module-indicator {
+    border-color: #2563eb;
+}
+
+.module-item.active .module-indicator::after {
+    content: "";
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 6px;
+    height: 6px;
+    border-radius: 999px;
+}
+
+.module-indicator.locked {
+    border: none;
+    background: #2563eb;
+    color: white;
+    font-size: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.lock-icon {
+    font-size: 9px;
+    line-height: 1;
+}
+
+.module-indicator.locked .lock-icon::before {
+    content: "\1F512";
+}
+
+.status {
+    float: right;
+    font-size: 14px;
+}
+
+.content {
+    flex: 1;
+    padding: 40px;
+    overflow-y: auto;
+    transition: padding 0.25s ease;
+}
+
+.content h1 {
+    font-size: 32px;
+    margin: 0 0 18px;
+}
+
+.content-box {
+    background: white;
+    padding: 28px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.lesson-content {
+    font-size: 17px;
+    line-height: 1.85;
+    color: #1f2937;
+    white-space: normal;
+    word-break: break-word;
+}
+
+.lesson-content h1,
+.lesson-content h2,
+.lesson-content h3 {
+    margin-top: 0;
+    margin-bottom: 14px;
+    line-height: 1.35;
+}
+
+.btn-quiz {
+    margin-top: 26px;
+    display: inline-block;
+    padding: 12px 24px;
+    background: #1a73e8;
+    color: white;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.btn-quiz:hover {
+    background: #1558c0;
+}
+
+.btn-next {
+    margin-top: 26px;
+    display: inline-block;
+    padding: 12px 24px;
+    background: #16a34a;
+    color: white;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.btn-next:hover {
+    background: #15803d;
+}
+
+.btn-disabled {
+    margin-top: 26px;
+    display: inline-block;
+    padding: 12px 24px;
+    background: #9ca3af;
+    color: white;
+    border-radius: 8px;
+    font-weight: 600;
+}
+
+.empty-state {
+    background: white;
+    padding: 24px;
+    border-radius: 10px;
+    border: 1px solid #e5e7eb;
+}
+
+body.sidebar-collapsed .sidebar {
+    width: 76px;
+}
+
+body.sidebar-collapsed .sidebar h3,
+body.sidebar-collapsed .sidebar-subtitle,
+body.sidebar-collapsed .module-label {
+    display: none;
+}
+
+body.sidebar-collapsed .sidebar-header {
+    justify-content: center;
+}
+
+body.sidebar-collapsed .module-item {
+    display: flex;
+    justify-content: center;
+}
+
+body.sidebar-collapsed .module-title {
+    gap: 0;
+}
+
+body.sidebar-collapsed .module-item {
+    border-left-color: transparent !important;
+}
+
+body.sidebar-collapsed .content {
+    padding: 40px 52px;
+}
+
+/* Structured content styling */
+.lesson-content h2 {
+    margin-top: 25px;
+    margin-bottom: 10px;
+}
+
+.lesson-content p {
+    margin-bottom: 15px;
+    line-height: 1.7;
+}
+
+.lesson-content pre {
+    border-radius: 10px;
+    padding: 15px;
+    overflow-x: auto;
+}
+
+
+.lesson-content code {
+    font-family: Consolas, monospace;
+    font-size: 14px;
+}
+
+.copy-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #2563eb;
+    border: none;
+    color: white;
+    padding: 6px 10px;
+    font-size: 12px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.copy-btn:hover {
+    background: #1d4ed8;
+}
+
+@media (max-width: 1200px) {
+    .sidebar {
+        width: 88px;
+    }
+
+    .sidebar h3,
+    .sidebar-subtitle,
+    .module-label {
+        display: none;
+    }
+
+    .sidebar-header {
+        justify-content: center;
+        padding: 12px 8px;
+    }
+
+    .module-item {
+        display: flex;
+        justify-content: center;
+        padding: 12px 8px;
+        border-left-color: transparent !important;
+    }
+
+    .module-title {
+        gap: 0;
+    }
+
+    .content {
+        padding: 24px;
+    }
+}
+
+
+/* Micro-lesson review card */
+.micro-lesson {
+    background: #fffbe6;
+    border: 1px solid #f2d184;
+    border-radius: 14px;
+    padding: 0;
+    margin-bottom: 32px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.04);
+    overflow: hidden;
+    }
+
+    .micro-lesson-header {
+        padding: 16px 20px;
+        background: linear-gradient(90deg, #fff3cd, #fffbe6);
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .micro-lesson-header:hover {
+        background: #fff1b8;
+    }
+
+    .header-left {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .header-right {
+        font-size: 14px;
+        transition: transform 0.2s ease;
+    }
+
+    .micro-lesson-body {
+        padding: 18px 22px 22px;
+        font-size: 15.5px;
+        line-height: 1.7;
+        color: #333;
+        background: #fffdf2;
+    }
+
+    .micro-warning {
+        font-size: 14px;
+        font-weight: 500;
+        color: #b26a00;
+        margin-bottom: 12px;
+    }
+
+    .micro-lesson.collapsed .micro-lesson-body {
+        display: none;
+    }
+
+    .micro-lesson.collapsed .header-right {
+        transform: rotate(-90deg);
+    }
+
+</style>
+{% include 'courses/includes/progress_loader_assets.html' %}
+</head>
+
+<body>
+
+<div class="navbar">
+    <div class="navbar-left">
+        <a href="{% url 'dashboard' %}" class="back-link">Dashboard</a>
+    </div>
+    <div class="course-title">{{ course.title }}</div>
+    <div class="navbar-right">
+        <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
+    </div>
+</div>
+
+<div class="layout">
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h3>Modules</h3>
+            <button class="collapse-btn" id="sidebarToggle" type="button" aria-label="Toggle sidebar">&#9776;</button>
+        </div>
+
+        {% for module in modules %}
+            {% if module.id in unlocked_modules %}
+                <a href="?module={{ module.id }}" style="text-decoration:none;color:inherit;">
+                    <div class="module-item {% if current_module and module.id == current_module.id %}active{% endif %}">
+                        <span class="module-title">
+                            <span class="module-indicator"></span>
+                            <span class="module-label">{{ module.order }}. {{ module.title }}</span>
+                        </span>
+                    </div>
+                </a>
+            {% else %}
+                <div class="module-item locked">
+                    <span class="module-title">
+                        <span class="module-indicator locked"></span>
+                        <span class="module-label">{{ module.order }}. {{ module.title }}</span>
+                    </span>
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+
+    <div class="content">
+        {% if current_module %}
+            <h1>{{ current_module.title }}</h1>
+
+            <div class="content-box">
+                
+    <!-- Optional micro-lesson (only shows if exists) -->
+    {% if current_module.remedial_text and not current_module.remedial_consumed %}
+    
+    <div class="micro-lesson" id="microLesson">
+        
+        <div class="micro-lesson-header" onclick="toggleMicroLesson()">
+            <div class="header-left">
+                <span>Micro-Module from Previous Module</span>
+            </div>
+            <div class="header-right" id="microToggle">&#9660;</div>
+        </div>
+        
+        
+            <div class="micro-lesson-body">
+            <div class="micro-warning">Quick reinforcement before you continue.</div>
+            {{ current_module.remedial_text|striptags|cut:"**"|cut:"*"|cut:"##"|cut:"Review from last module:"|safe }}
+
+            </div>
+        </div>
+        {% endif %}
+
+                {% if current_module.warmup_text %}
+                    <div class="lesson-content" id="lessonContent">
+                        {{ formatted_content|safe }}
+                    </div>
+                {% else %}
+                    <p>Main lesson content is not available for this module yet.</p>
+                {% endif %}
+
+                </div>
+
+
+
+            {% if current_module.id not in completed_ids %}
+                <a href="{% url 'take_quiz' course.id current_module.id %}" class="btn-quiz js-quiz-link">
+                    Take Quiz and Unlock Next Module
+                </a>
+            {% else %}
+                {% if next_module_unlocked %}
+                    <a href="{% url 'course_detail' course.id %}?module={{ next_module.id }}" class="btn-next">
+                        Module Completed - Go to Next Module
+                    </a>
+                {% elif next_module %}
+                    <a href="{% url 'take_quiz' course.id current_module.id %}" class="btn-quiz js-quiz-link">
+                        Take Quiz and Unlock Next Module
+                    </a>
+                {% else %}
+                    <span class="btn-disabled">Module Completed</span>
+                {% endif %}
+            {% endif %}
+        {% else %}
+            <div class="empty-state">
+                <h2>No module selected</h2>
+                <p>Select an available module from the left panel.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Loading overlay -->
+{% include 'courses/includes/progress_loader_overlay.html' with loader_id='quizLoadingOverlay' loader_title='Generating your personalized test' loader_subtext='Preparing questions for this module...' loader_icon_path='M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14-5-5h3V7h4v5h3l-5 5z' %}
+<script>
+
+ function toggleMicroLesson() {
+        const box = document.getElementById("microLesson");
+        box.classList.toggle("collapsed");
+    }
+    
+const quizLoader = window.createProgressLoader("quizLoadingOverlay");
+
+function showQuizLoader(context) {
+    const moduleName = context.moduleTitle || "this module";
+    const courseName = context.courseTitle || "your course";
+
+    const messages = [
+        `Analyzing ${moduleName} concepts...`,
+        "Selecting question difficulty...",
+        "Generating personalized prompts...",
+        "Balancing concept coverage...",
+        "Preparing answer validations...",
+        "Finalizing your test..."
+    ];
+
+    if (quizLoader) {
+        quizLoader.show({
+            title: `Generating test for ${moduleName}`,
+            subText: `Course: ${courseName}`,
+            initialStatus: "Connecting...",
+            messages
+        });
+    }
+}
+
+const toggleBtn = document.getElementById("sidebarToggle");
+toggleBtn.addEventListener("click", function () {
+    document.body.classList.toggle("sidebar-collapsed");
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll(".js-quiz-link").forEach((link) => {
+        link.addEventListener("click", function (event) {
+            event.preventDefault();
+
+            const moduleTitleEl = document.querySelector(".content h1");
+            const courseTitleEl = document.querySelector(".course-title");
+
+            showQuizLoader({
+                moduleTitle: moduleTitleEl ? moduleTitleEl.textContent.trim() : "this module",
+                courseTitle: courseTitleEl ? courseTitleEl.textContent.trim() : "your course"
+            });
+
+            const destination = this.getAttribute("href");
+            setTimeout(() => {
+                window.location.assign(destination);
+            }, 80);
+        });
+    });
+
+    document.querySelectorAll("pre code").forEach((block) => {
+        const button = document.createElement("button");
+        button.innerText = "Copy";
+        button.style.position = "absolute";
+        button.style.right = "30px";
+        button.style.top = "30px";
+        button.style.padding = "6px 12px";
+        button.style.fontSize = "12px";
+        button.style.background = "#2563eb";
+        button.style.color = "white";
+        button.style.border = "none";
+        button.style.borderRadius = "5px";
+        button.style.cursor = "pointer";
+
+        const pre = block.parentElement;
+        pre.style.position = "relative";
+
+        button.onclick = function () {
+            navigator.clipboard.writeText(block.innerText);
+            button.innerText = "Copied!";
+            setTimeout(() => button.innerText = "Copy", 1500);
+        };
+
+        pre.appendChild(button);
+    });
+
+});
+</script>
+
+
+</body>
+</html>
+
+
+
+
+
+

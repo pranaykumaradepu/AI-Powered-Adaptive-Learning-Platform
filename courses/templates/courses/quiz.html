@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Quiz - {{ module.title }}</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background: #f7f8fb;
+            color: #1f2937;
+        }
+
+        .topbar {
+            background: #0a2540;
+            color: white;
+            padding: 14px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .topbar a {
+            color: #dbeafe;
+            text-decoration: none;
+            margin-right: 12px;
+        }
+
+        .logout-btn {
+            background: #1d4ed8;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 14px;
+            text-decoration: none;
+        }
+
+        .page {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 14px;
+            padding: 36px 40px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 16px;
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        h1 {
+            font-size: 26px;
+            margin-bottom: 6px;
+        }
+
+        .pass-info {
+            font-size: 14px;
+            color: #6b7280;
+            margin-bottom: 30px;
+        }
+
+        .question {
+            margin-bottom: 28px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .question:last-child {
+            border-bottom: none;
+        }
+
+        .question-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+            margin-bottom: 8px;
+            cursor: pointer;
+        }
+
+        .option:hover {
+            background: #f9fafb;
+        }
+
+        .option input {
+            accent-color: #2563eb;
+        }
+
+        .submit-btn {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 10px 26px;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .submit-btn:hover {
+            background: #1d4ed8;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="topbar">
+    <div>
+        <a href="{% url 'dashboard' %}">Dashboard</a>
+        <a href="{% url 'course_detail' module.course.id %}?module={{ module.id }}">Back to Module</a>
+    </div>
+    <div>
+        <span style="margin-right:12px;">{{ request.user.username }}</span>
+        <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
+    </div>
+</div>
+
+<div class="page">
+    <div class="card">
+
+        <a href="{% url 'course_detail' module.course.id %}?module={{ module.id }}" class="back-link">
+            Back to Module
+        </a>
+
+        <h1>Quiz: {{ module.title }}</h1>
+        <div class="pass-info">
+            You need <strong>60%</strong> to pass.
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+
+            {% for question in questions %}
+                <div class="question">
+
+                    <div class="question-title">
+                        {{ forloop.counter }}. {{ question.question_text }}
+                    </div>
+
+                    <label class="option">
+                        <input type="radio"
+                               name="question_{{ question.id }}"
+                               value="A"
+                               required>
+                        {{ question.option_a }}
+                    </label>
+
+                    <label class="option">
+                        <input type="radio"
+                               name="question_{{ question.id }}"
+                               value="B">
+                        {{ question.option_b }}
+                    </label>
+
+                    <label class="option">
+                        <input type="radio"
+                               name="question_{{ question.id }}"
+                               value="C">
+                        {{ question.option_c }}
+                    </label>
+
+                </div>
+            {% endfor %}
+
+            <button type="submit" class="submit-btn">
+                Submit Answers
+            </button>
+
+        </form>
+
+    </div>
+</div>
+
+</body>
+</html>

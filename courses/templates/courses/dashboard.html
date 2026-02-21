@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
+
+    <style>
+        :root {
+            --bg: #f7f8fb;
+            --card: #ffffff;
+            --text: #0f172a;
+            --muted: #64748b;
+            --primary: #2563eb;
+            --border: #e5e7eb;
+            --success: #22c55e;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Inter, "Segoe UI", sans-serif;
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        /* Top bar */
+        .topbar {
+            background: white;
+            border-bottom: 1px solid var(--border);
+            padding: 14px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .topbar .user {
+            font-weight: 600;
+        }
+
+        .logout-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        /* Page */
+        .page {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 24px;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin: 0;
+        }
+
+        .header p {
+            margin: 6px 0 0;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .new-course-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* Stats */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 36px;
+        }
+
+        .stat-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 20px;
+        }
+
+        .stat-card span {
+            font-size: 13px;
+            color: var(--muted);
+        }
+
+        .stat-card h2 {
+            margin: 6px 0 0;
+            font-size: 22px;
+        }
+
+        /* Courses */
+        .courses {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 24px;
+        }
+
+        .course-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .course-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.06);
+        }
+
+        .course-date {
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .course-title {
+            font-size: 18px;
+            font-weight: 700;
+            line-height: 1.3;
+        }
+
+        .progress {
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 999px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--success);
+        }
+
+        .continue-btn {
+            margin-top: auto;
+            background: var(--primary);
+            color: white;
+            text-decoration: none;
+            text-align: center;
+            padding: 12px;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+
+        /* Empty state */
+        .empty {
+            background: white;
+            border: 1px dashed var(--border);
+            border-radius: 16px;
+            padding: 60px;
+            text-align: center;
+            color: var(--muted);
+        }
+
+        @media (max-width: 600px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 16px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- Topbar -->
+<div class="topbar">
+    <div class="user">👋 {{ request.user.username }}</div>
+    <a href="{% url 'logout' %}">
+        <button class="logout-btn">Logout</button>
+    </a>
+</div>
+
+<div class="page">
+
+    <!-- Header -->
+    <div class="header">
+        <div>
+            <h1>Your Learning Dashboard</h1>
+            <p>Track your progress and continue where you left off</p>
+        </div>
+        <a href="{% url 'create_course' %}">
+            <button class="new-course-btn">＋ Create New Course</button>
+        </a>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats">
+        <div class="stat-card">
+            <span>Total Courses</span>
+            <h2>{{ courses|length }}</h2>
+        </div>
+        <div class="stat-card">
+            <span>Completed Modules</span>
+            <h2>{{ completed_modules|default:0 }}</h2>
+        </div>
+        <div class="stat-card">
+            <span>Learning Streak</span>
+            <h2> {{ streak }} day{{ streak|pluralize }}</h2>
+        </div>
+    </div>
+
+    <!-- Courses -->
+    {% if dashboard_courses %}
+        <div class="courses">
+            {% for item in dashboard_courses %}
+                <div class="course-card">
+                    <div class="course-date">
+                        {{ item.course.created_at|date:"M d, Y" }}
+                    </div>
+
+                    <div class="course-title">
+                        {{ item.course.title }}
+                    </div>
+
+                    <div class="progress">
+                        <div class="progress-bar" style="width: {{ item.progress|default:0 }}%;"></div>
+                    </div>
+
+                    <a href="{% url 'course_detail' item.course.id %}" class="continue-btn">
+                        Continue Learning →
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty">
+            <h2>No courses yet</h2>
+            <p>Create your first personalized learning path to get started.</p>
+        </div>
+    {% endif %}
+
+
+</div>
+
+</body>
+</html>

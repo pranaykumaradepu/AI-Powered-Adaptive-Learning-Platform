@@ -1,0 +1,25 @@
+<div id="{{ loader_id }}" class="apl-loader-overlay" aria-live="polite" aria-busy="true">
+    <div class="apl-loader-card">
+        <div class="apl-loader-header">
+            <div class="apl-loader-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                    <path d="{{ loader_icon_path|default:'M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z' }}"/>
+                </svg>
+            </div>
+            <div>
+                <h3 class="apl-loader-title">{{ loader_title }}</h3>
+                <p class="apl-loader-subtext">{{ loader_subtext }}</p>
+            </div>
+        </div>
+
+        <div class="apl-loader-progress">
+            <div class="apl-loader-meta">
+                <span class="apl-loader-status">Connecting...</span>
+                <span class="apl-loader-percent">0%</span>
+            </div>
+            <div class="apl-loader-track">
+                <div class="apl-loader-fill"></div>
+            </div>
+        </div>
+    </div>
+</div>

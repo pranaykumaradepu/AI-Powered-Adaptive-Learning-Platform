@@ -1,0 +1,155 @@
+<style>
+.apl-loader-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(240, 244, 252, 0.85);
+    backdrop-filter: blur(6px);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    padding: 16px;
+}
+
+.apl-loader-card {
+    background-color: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(12px);
+    width: min(420px, 100%);
+    padding: 28px;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    border: 1px solid rgba(229, 231, 235, 0.65);
+}
+
+.apl-loader-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.apl-loader-icon {
+    width: 52px;
+    height: 52px;
+    background: #eff6ff;
+    border-radius: 14px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #3b82f6;
+    flex-shrink: 0;
+}
+
+.apl-loader-icon svg {
+    width: 28px;
+    height: 28px;
+    fill: currentColor;
+}
+
+.apl-loader-title {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #111827;
+}
+
+.apl-loader-subtext {
+    margin: 4px 0 0 0;
+    font-size: 14px;
+    color: #6b7280;
+    font-weight: 400;
+}
+
+.apl-loader-progress {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.apl-loader-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    color: #4b5563;
+    font-weight: 500;
+}
+
+.apl-loader-track {
+    width: 100%;
+    height: 8px;
+    background-color: rgba(243, 244, 246, 0.9);
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+.apl-loader-fill {
+    height: 100%;
+    width: 0%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #2563eb 0%, #06b6d4 100%);
+    transition: width 0.3s linear;
+}
+</style>
+
+<script>
+if (!window.createProgressLoader) {
+    window.createProgressLoader = function createProgressLoader(overlayId) {
+        const overlay = document.getElementById(overlayId);
+        if (!overlay) {
+            return null;
+        }
+
+        const titleEl = overlay.querySelector('.apl-loader-title');
+        const subTextEl = overlay.querySelector('.apl-loader-subtext');
+        const statusEl = overlay.querySelector('.apl-loader-status');
+        const percentEl = overlay.querySelector('.apl-loader-percent');
+        const barEl = overlay.querySelector('.apl-loader-fill');
+
+        let progress = 0;
+        let interval = null;
+
+        function tick(messages) {
+            if (progress < 85) {
+                progress += Math.random() * 3 + 1;
+            } else if (progress < 95) {
+                progress += Math.random() * 0.2;
+            }
+
+            const visualProgress = Math.min(progress, 95);
+            barEl.style.width = `${visualProgress}%`;
+            percentEl.textContent = `${Math.floor(visualProgress)}%`;
+
+            const msgIndex = Math.floor((visualProgress / 95) * messages.length);
+            if (messages[msgIndex]) {
+                statusEl.textContent = messages[msgIndex];
+            }
+        }
+
+        return {
+            show(config) {
+                const messages = Array.isArray(config.messages) && config.messages.length
+                    ? config.messages
+                    : ['Working...'];
+
+                titleEl.textContent = config.title || 'Working...';
+                subTextEl.textContent = config.subText || '';
+                statusEl.textContent = config.initialStatus || 'Connecting...';
+
+                clearInterval(interval);
+                progress = 5;
+                barEl.style.width = `${progress}%`;
+                percentEl.textContent = `${Math.floor(progress)}%`;
+
+                overlay.style.display = 'flex';
+                interval = setInterval(() => tick(messages), 200);
+            },
+            hide() {
+                clearInterval(interval);
+                overlay.style.display = 'none';
+            }
+        };
+    };
+}
+</script>
