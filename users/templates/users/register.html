@@ -1,133 +1,93 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Create Account</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register | Join the Platform</title>
     <style>
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            height: 100vh;
+        /* Shared Styles */
+        :root { --primary: #2563eb; --dark: #1e3a8a; --bg-pattern: #f1f5f9; }
+        body { font-family: 'Inter', sans-serif; background: #f8fafc; margin: 0; display: flex; align-items: center; justify-content: center; height: 100vh; overflow: hidden; }
+        
+        .main-wrapper {
             display: flex;
-            align-items: center;
+            flex-direction: row-reverse; /* Flip orientation for the "shift" effect */
+            width: 1000px;
+            height: 650px;
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            /* Entry Animation from the Right */
+            animation: slideInFromRight 0.7s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        .hero-side {
+            flex: 1.1;
+            background: linear-gradient(225deg, var(--dark), var(--primary));
+            padding: 60px;
+            color: white;
+            display: flex;
+            flex-direction: column;
             justify-content: center;
         }
-        .auth-card {
-            background: white;
-            padding: 40px;
-            border-radius: 12px;
-            width: 360px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-        }
-        .auth-card h2 {
-            margin-bottom: 20px;
-            text-align: center;
-        }
-        .auth-card input {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 14px;
-            border-radius: 6px;
-            border: 1px solid #ddd;
-            font-size: 14px;
-        }
-        .auth-card button {
-            width: 100%;
-            padding: 12px;
-            background: #667eea;
-            border: none;
-            color: white;
-            font-weight: bold;
-            border-radius: 6px;
-            cursor: pointer;
-        }
-        .auth-card a {
-            display: block;
-            margin-top: 15px;
-            text-align: center;
-            color: #555;
-            text-decoration: none;
+
+        .form-side {
+            flex: 1.2;
+            padding: 40px 80px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background-image: radial-gradient(var(--bg-pattern) 1.5px, transparent 1.5px);
+            background-size: 24px 24px;
         }
 
-        .form-error {
-            background: #ffe6e6;
-            color: #b00020;
-            padding: 12px 16px;
-            border-radius: 8px;
-            margin-bottom: 18px;
-            font-size: 14px;
-            animation: fadeIn 0.3s ease-in-out;
-        }
+        h2 { font-size: 28px; color: #0f172a; margin-bottom: 8px; }
+        input { width: 100%; padding: 12px; margin-bottom: 12px; border: 2px solid #e2e8f0; border-radius: 10px; box-sizing: border-box; }
+        
+        .password-info { background: #eff6ff; padding: 15px; border-radius: 10px; margin-bottom: 20px; font-size: 13px; color: #1e40af; border-left: 4px solid var(--primary); }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-5px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        .btn-primary { width: 100%; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; transition: 0.2s; }
+        .btn-primary:hover { background: var(--dark); }
 
-        .password-hints {
-            font-size: 13px;
-            color: #555;
-            margin: 12px 0 20px;
+        @keyframes slideInFromRight {
+            0% { transform: translateX(100px); opacity: 0; }
+            100% { transform: translateX(0); opacity: 1; }
         }
-        .password-hints ul {
-            padding-left: 18px;
-            margin: 6px 0 0;
-        }
-        .password-hints li {
-            margin-bottom: 4px;
-        }
-
     </style>
 </head>
 <body>
 
-<div class="auth-card">
-    <h2>Create Account</h2>
-
-    <form method="post">
-        {% csrf_token %}
-
-        {% if form.errors %}
-            <div id="form-error" class="form-error">
-                {{ form.errors }}
-            </div>
-        {% endif %}
-
-
-
-        <input type="text" name="username" placeholder="Username" required>
-        <input type="email" name="email" placeholder="Email address" required>
-        <input type="password" name="password1" placeholder="Password" required>
-        <input type="password" name="password2" placeholder="Confirm Password" required>
-        
-        <div class="password-hints">
-            <p>Password must contain:</p>
-            <ul>
-                <li>At least 8 characters</li>
-                <li>1 uppercase letter</li>
-                <li>1 lowercase letter</li>
-                <li>1 number</li>
-                <li>1 special character</li>
-            </ul>
+<div class="main-wrapper">
+    <div class="hero-side">
+        <h1>Start Your<br>Journey Today</h1>
+        <p>Create an account to unlock personalized features and collaborative tools.</p>
+        <div style="margin-top: 40px; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 20px;">
+            <p style="font-size: 14px; font-weight: 500;">Already part of our community?</p>
+            <a href="{% url 'login' %}" style="color: white; text-decoration: underline; font-weight: 700;">Login to your account</a>
         </div>
+    </div>
 
+    <div class="form-side">
+        <h2>Create Account</h2>
+        <p style="color: #64748b; margin-bottom: 25px;">Fill in the details below to get started.</p>
 
-        <button type="submit">Create Account</button>
-    </form>
+        <form method="post">
+            {% csrf_token %}
+            <input type="text" name="username" placeholder="Username" required>
+            <input type="email" name="email" placeholder="Email Address" required>
+            <input type="password" name="password1" placeholder="Password" required>
+            <input type="password" name="password2" placeholder="Confirm Password" required>
+            
+            <div class="password-info">
+                <strong>Password Security:</strong><br>
+                Include uppercase, lowercase, numbers, and symbols.
+            </div>
 
-
-    <a href="{% url 'login' %}">Already have an account? Login</a>
+            <button type="submit" class="btn-primary">Register Now</button>
+        </form>
+    </div>
 </div>
 
 </body>
-<script>
-    const errorBox = document.getElementById("form-error");
-    if (errorBox) {
-        setTimeout(() => {
-            errorBox.style.transition = "opacity 0.5s ease";
-            errorBox.style.opacity = "0";
-            setTimeout(() => errorBox.remove(), 500);
-        }, 4000);
-    }
-</script>
-
 </html>
